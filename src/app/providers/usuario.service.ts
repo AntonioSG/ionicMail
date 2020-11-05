@@ -17,21 +17,15 @@ export class UsuarioService {
    /**
    * Método para autenticar al usuario, recibiendo su nombre y su contraseña.
    */
-  autenticaUsuario (usuario: string, password: string) : Observable<DatosConJwt> {
+  autenticaUsuario (usuario: string, password: string) : Promise<DatosConJwt> {
     const md5 = new Md5(); // Creo un objeto que permite codificar en MD5
     var jsonObject = {
       usuario: usuario,
       password: md5.appendStr(password).end().toString()  // Codifico en MD5 el password recibido
     };
 
-console.log(password + " - " + jsonObject.password);
-
     // Envío la petición http y devuelvo el Observable, para que cualquiera pueda subscribirse.
-    return this.http.post<DatosConJwt>('/usuario/autentica', jsonObject).pipe(
-      tap(data => { 
-//        console.log('Desde tap miro los datos recibidos: ' + data["jwt"]);
-      })
-    ); 
+    return this.http.post<DatosConJwt>('/usuario/autentica', jsonObject).toPromise(); 
 
   }
 
