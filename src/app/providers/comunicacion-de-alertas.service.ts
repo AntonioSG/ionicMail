@@ -65,4 +65,35 @@ export class ComunicacionDeAlertasService {
   }
 
 
+  /**
+   * Muestra una alerta de confirmación, con dos botones. 
+   * @param confirmText 
+   * @param okFunction  Función a realizar si se pulsa el botón "ok"
+   * @param cancelFunction  Función a realizar si se pulsa el botón "Cancel"
+   */
+  async mostrarConfirmacion(confirmText: string, okFunction: Function, cancelFunction: Function) {
+    const alert = await this.alertController.create({
+//      cssClass: 'my-custom-class',
+//      header: 'Confirm!',
+      message: confirmText,
+      buttons: [ // array de botones
+        {
+          text: 'No',
+          role: 'cancel',
+          cssClass: 'secondary',
+          handler: () => { // Cuando se pulsa este botón, se llama a la función de "cancel"
+            cancelFunction();
+          }
+        }, {
+          text: 'Sí',
+          handler: () => { // Al pulsar sobre este botón se llama a la función de "ok"
+            okFunction();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
 }
