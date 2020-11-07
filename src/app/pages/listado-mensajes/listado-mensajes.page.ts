@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { ViewChild } from '@angular/core';
-import { IonInfiniteScroll, IonList, NavController } from '@ionic/angular';
+import { ActionSheetController, IonInfiniteScroll, IonList, MenuController, NavController } from '@ionic/angular';
 import { ListadoMensajes, Mensaje, Usuario} from '../../interfaces/interfaces';
 import { MensajeService } from '../../providers/mensaje.service';
 import { UsuarioService } from '../../providers/usuario.service';
 import { ComunicacionDeAlertasService } from '../../providers/comunicacion-de-alertas.service'; 
 import { NavigationExtras, Router } from '@angular/router';
+import { AutenticadorJwtService } from 'src/app/providers/autenticador-jwt.service';
 
 
 @Component({
@@ -26,23 +27,35 @@ export class ListadoMensajesPage implements OnInit {
   textoTipoMensajes = ""; // Usado para mostrar un texto en la cabecera de la página: "Recibidos", "Enviados", etc...
   paginaACargar = 0; // Página de mensajes a cargar en cada momento.
   mensajesPorPagina = 30; // Cantidad de mensajes a cargar por cada página.
+  usuarioAutenticado: Usuario; // Usuario autenticado, se obtiene en la inicialización del componente
+
 
   /**
    * 
    * @param mensajesService 
    * @param comunicacionAlertas 
    * @param navControler 
+   * @param router 
+   * @param usuarioService 
+   * @param menu 
+   * @param autenticacionPorJWT 
    */
   constructor(private mensajesService: MensajeService,
     private comunicacionAlertas: ComunicacionDeAlertasService,
     private navControler: NavController,
-    private router: Router) { }
+    private router: Router, private usuarioService: UsuarioService,
+    private actionSheetController: ActionSheetController, 
+    private autenticacionPorJWT: AutenticadorJwtService) { }
 
   /**
    * Hook para cargar mensajes en la inicialización del componente
    */
   ngOnInit() {
     this.cargarMensajes();
+    // Cargo el usuario autenticado
+    this.usuarioService.getUsuarioAutenticado(true).subscribe(usuAutenticado => {
+      this.usuarioAutenticado = usuAutenticado;
+    })
   }
 
   /**
@@ -115,7 +128,10 @@ export class ListadoMensajesPage implements OnInit {
             // pasándole a la navegación el id del mensaje.
   }
 
-
+  /**
+   * Método llamado con el evento de scroll infinito
+   * @param event 
+   */
   scrollInfinito(event) {
     setTimeout(() => {
       event.target.complete();
@@ -130,5 +146,71 @@ export class ListadoMensajesPage implements OnInit {
     }, 500); // Retardo de 500 milisegundos antes de cargar más mensajes.
   }
 
+  /**
+   * Recarga de los mensajes, se llegará aquí tras pulsar una opción del menú lateral
+   * @param nuevoTipo 
+   */
+  recargarListadoMensajes(nuevoTipo: number) {
+    this.tipoListadoMensajes = nuevoTipo;
+    this.mensajes = [];
+    this.paginaACargar = 0;
+    this.cargarMensajes();
+  }
+
+  /**
+   * Cierra la sesión de usuario, se llega aquí tras la correspondiente opción del menú lateral
+   */
+  cerrarSesion() {
+    this.comunicacionAlertas.mostrarConfirmacion("¿Desea cerrar sesión?", () => {
+      this.autenticacionPorJWT.eliminaJWT();
+      this.navControler.navigateForward('/login'); // Navego hasta el listado de mensajes
+    }, () => {
+      console.log('cancel');
+    });
+  }
+
+  /**
+   * Método que muestra un componente llamado "action-sheet" para formar un menú que permita
+   * navegar entre diferentes tipos de mensajes.
+   */
+  async mostrarMenu() {
+    const actionSheet = await this.actionSheetController.create({
+      header: 'Menú',
+//      cssClass: 'my-custom-class',
+      buttons: [{
+        text: 'Recibidos',
+        icon: 'mail',
+        handler: () => {
+          this.recargarListadoMensajes(0);
+        }
+      }, {
+        text: 'Enviados',
+        icon: 'paper-plane',
+        handler: () => {
+          this.recargarListadoMensajes(1);
+        }
+      }, {
+        text: 'Spam',
+        icon: 'warning',
+        handler: () => {
+          this.recargarListadoMensajes(2);
+        }
+      }, {
+        text: 'Archivados',
+        icon: 'archive',
+        handler: () => {
+          this.recargarListadoMensajes(3);
+        }
+      }, {
+        text: 'Cerrar sesión',
+        icon: 'close',
+        role: 'cancel',
+        handler: () => {
+          this.cerrarSesion();
+        }
+      }]
+    });
+    await actionSheet.present();
+  }
 
 }
