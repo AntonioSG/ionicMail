@@ -25,6 +25,7 @@
   <ion-list *ngIf="totalMensajes > 0" id="list">
     <!-- Creo un ion-item por cada elemento del array "mensajes" -->
     <ion-item button *ngFor="let mensaje of mensajes" (click)="detalleMensaje(mensaje)" class="{{mensaje.leido ? '' : 'noLeido'}}">
+      <app-imagen-usuario [idUsuario]="mensaje.remitente.id"></app-imagen-usuario>
       <ion-label id="label">
         <ion-text>
           <ion-label>{{getTextoRemitente(mensaje)}}</ion-label>

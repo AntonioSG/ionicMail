@@ -7,6 +7,7 @@ import { IonicModule } from '@ionic/angular';
 import { ListadoMensajesPageRoutingModule } from './listado-mensajes-routing.module';
 
 import { ListadoMensajesPage } from './listado-mensajes.page';
+import { ImagenUsuarioComponent } from '../../components/imagen-usuario/imagen-usuario.component';
 
 @NgModule({
   imports: [
@@ -15,6 +16,6 @@ import { ListadoMensajesPage } from './listado-mensajes.page';
     IonicModule,
     ListadoMensajesPageRoutingModule
   ],
-  declarations: [ListadoMensajesPage]
+  declarations: [ListadoMensajesPage, ImagenUsuarioComponent]
 })
 export class ListadoMensajesPageModule {}
