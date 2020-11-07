@@ -37,4 +37,32 @@ export class ComunicacionDeAlertasService {
     await alert.present();
   }
 
+
+  /**
+   * Método para mostrar un pequeño diálogo de carga, una animación
+   */
+  async mostrarCargando() {
+    this.isLoading = true; // El diálogo se muestra si la variable está a true. Esta
+    // variable domina el diálogo de carga.
+    return await this.loadingController.create({
+      // duration: 5000,  // Si queremos una duración fija del diálogo, descomentas esta línea
+    }).then(a => { // Una vez que el diálogo se crea, se muestra, con el método "present"
+      a.present().then(() => {
+        if (!this.isLoading) { // Cuando la variable "isLoading" se anule, cerramos el diálogo
+          a.dismiss().then(() => {}); // Cerramos el diálogo
+        }
+      });
+    });
+  }
+
+  /**
+   * Para cerrar un diálogo de carga simplemente ponemos la variable a false
+   */
+  async ocultarCargando() {
+    this.isLoading = false;
+    // Podemos intervenir desde aquí en el momento del cierre del diálogo, método "dismiss"
+    return await this.loadingController.dismiss().then(() => {});
+  }
+
+
 }
