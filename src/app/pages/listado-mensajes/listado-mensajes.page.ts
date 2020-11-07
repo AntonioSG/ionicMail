@@ -5,6 +5,7 @@ import { ListadoMensajes, Mensaje, Usuario} from '../../interfaces/interfaces';
 import { MensajeService } from '../../providers/mensaje.service';
 import { UsuarioService } from '../../providers/usuario.service';
 import { ComunicacionDeAlertasService } from '../../providers/comunicacion-de-alertas.service'; 
+import { NavigationExtras, Router } from '@angular/router';
 
 
 @Component({
@@ -34,7 +35,8 @@ export class ListadoMensajesPage implements OnInit {
    */
   constructor(private mensajesService: MensajeService,
     private comunicacionAlertas: ComunicacionDeAlertasService,
-    private navControler: NavController) { }
+    private navControler: NavController,
+    private router: Router) { }
 
   /**
    * Hook para cargar mensajes en la inicialización del componente
@@ -108,7 +110,9 @@ export class ListadoMensajesPage implements OnInit {
    * @param mensaje 
    */
   detalleMensaje (mensaje: Mensaje) {
-    this.navControler.navigateForward('/detalle-mensaje');
+    mensaje.leido = true; // Marco el mensaje actual como leído, ya que se ha abierto
+    this.router.navigate(['/detalle-mensaje', mensaje.id, this.getTextoTipoMensajes()]); // Navego hasta listado de mensajes
+            // pasándole a la navegación el id del mensaje.
   }
 
 
