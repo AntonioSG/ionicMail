@@ -15,8 +15,8 @@ const routes: Routes = [
     path: 'listado-mensajes',
     loadChildren: () => import('./pages/listado-mensajes/listado-mensajes.module').then( m => m.ListadoMensajesPageModule)
   },
-  {
-    path: 'detalle-mensaje',
+  { // En la siguiente línea se declaran parámetros asociados al path de navegación
+    path: 'detalle-mensaje/:id/:tipoMensaje',
     loadChildren: () => import('./pages/detalle-mensaje/detalle-mensaje.module').then( m => m.DetalleMensajePageModule)
   },
 

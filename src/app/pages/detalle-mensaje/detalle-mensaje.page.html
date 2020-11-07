@@ -1,9 +1,28 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>detalleMensaje</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="volver()">
+        <ion-icon name="arrow-back-outline" ></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Mensaje</ion-title>
+    <ion-badge slot="end" class="badgeTipoMensajes">{{tipoMensaje}}</ion-badge>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="mensaje != null">
+  <h2 class="margen">{{mensaje.asunto}}</h2>
+  
+  <ion-item>
+    <app-imagen-usuario [idUsuario]="mensaje.remitente.id"></app-imagen-usuario>
+    <ion-label id="label">
+      <ion-text>
+        <ion-label>De: {{mensaje.remitente.nombre}}</ion-label>
+        <p>{{getTextoDestinatarios()}}</p>
+      </ion-text>
+    </ion-label>
+    <ion-note id="note">{{mensaje.fecha | date:'dd MMM'}}</ion-note>
+  </ion-item>
 
+  <p class="margen">{{mensaje.cuerpo}}</p>
 </ion-content>
