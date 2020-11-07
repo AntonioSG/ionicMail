@@ -1,9 +1,50 @@
+<!--
+  Las páginas Ionic mostrarán un elemento ion-header y un ion-content
+-->
 <ion-header>
   <ion-toolbar>
-    <ion-title>listadoMensajes</ion-title>
+    <ion-buttons slot="start">  <!-- solt="start" pone un botón en la parte izquierda-->
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{textoTipoMensajes}}</ion-title>
+    <!-- slot="end" pone el componente a la derecha-->
+    <ion-badge slot="end" class="badgeTotalMensajes">{{totalMensajes}}</ion-badge>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
 
+<!-- Contenido de esta página-->
+<ion-content>
+  <!-- Si no hay mensajes a mostrar, se muestra una imagen y un mensaje-->
+  <div *ngIf="totalMensajes == 0">    
+    <img src="assets/images/enjoyYourDay.png"/>
+    <p>No tienes mensajes en esta carpeta</p>
+  </div>
+
+  <!-- Creo un ion-list, cada mensaje será un ion-item -->
+  <ion-list *ngIf="totalMensajes > 0" id="list">
+    <!-- Creo un ion-item por cada elemento del array "mensajes" -->
+    <ion-item button *ngFor="let mensaje of mensajes" (click)="detalleMensaje(mensaje)" class="{{mensaje.leido ? '' : 'noLeido'}}">
+      <ion-label id="label">
+        <ion-text>
+          <ion-label>{{getTextoRemitente(mensaje)}}</ion-label>
+          <p>{{mensaje.asunto}}</p>
+        </ion-text>
+        <ion-text color="medium">
+          <p>{{mensaje.cuerpo}}</p>
+        </ion-text>
+      </ion-label>
+      <!-- Utilizo un pipe de tipo date para la fecha del mensaje -->
+      <ion-note id="note">{{mensaje.fecha | date:'dd MMM'}}</ion-note>
+    </ion-item>
+  </ion-list>
+
+  <!-- Un ion-infinite-scroll simplemente vigila el momento en que llegamos hasta el final
+  de la lista. Cuando se llega, se dispara un evento, se muestra un mensaje y una animación.
+  El evento lanzado llama a un método para cargar más mensajes.-->
+  <ion-infinite-scroll threshold="100px" (ionInfinite)="scrollInfinito($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Cargando mensajes...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
 </ion-content>
+
