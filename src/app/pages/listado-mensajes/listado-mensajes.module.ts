@@ -16,6 +16,7 @@ import { ImagenUsuarioComponent } from '../../components/imagen-usuario/imagen-u
     IonicModule,
     ListadoMensajesPageRoutingModule
   ],
-  declarations: [ListadoMensajesPage, ImagenUsuarioComponent]
+  declarations: [ListadoMensajesPage, 
+    ImagenUsuarioComponent] // Para poder usar el componente de imagen de usuario en este módulo, debo importarlo y declararlo
 })
 export class ListadoMensajesPageModule {}
